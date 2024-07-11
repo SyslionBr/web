@@ -37,7 +37,7 @@ stages:
         steps:
         - task: AzureStaticWebApp@0
           inputs:
-            workingDirectory: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+            workingDirectory: '$(Build.BinariesDirectory)'
             app_location: '/'
             skip_app_build: true
             azure_static_web_apps_api_token: '$(TokenDeploy)'
