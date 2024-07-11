@@ -36,20 +36,7 @@ stages:
               inputs:
                 instructions: "Deseja realizar a publicação agora?"
                 notifyUsers: 'pedroasmaia@outlook.com'
-                approvers: 'pedroasmaia@outlook.com'
-  - stage: DeployPrd
-    condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/main'))
-    dependsOn: Validation
-    jobs:
-      - job: cd
-        displayName: CD
-        steps:
-        - task: AzureStaticWebApp@0
-          inputs:
-            workingDirectory: '$(Build.SourcesDirectory)'
-            app_location: '/'
-            skip_app_build: true
-            azure_static_web_apps_api_token: '$(TokenDeployPRD)'
+                approvers: 'pedroasmaia@outlook.com' 
   - stage: DeployDev
     condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
     dependsOn: CI
@@ -63,3 +50,16 @@ stages:
             app_location: '/'
             skip_app_build: true
             azure_static_web_apps_api_token: '$(TokenDeployDev)'
+  - stage: DeployPrd
+    condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/main'))
+    dependsOn: Validation
+    jobs:
+      - job: cd
+        displayName: CD
+        steps:
+        - task: AzureStaticWebApp@0
+          inputs:
+            workingDirectory: '$(Build.SourcesDirectory)'
+            app_location: '/'
+            skip_app_build: true
+            azure_static_web_apps_api_token: '$(TokenDeployPRD)'
