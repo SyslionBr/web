@@ -1,4 +1,4 @@
-
+name: $(SourceBranchName).$(Rev:r)
 trigger:
 - main
 
@@ -16,8 +16,11 @@ stages:
         steps:
           - task: ArchiveFiles@2
             inputs:
-              rootFolderOrFile: '$(build.sourcesDirectory)'
-              includeRootFolder: false
+              rootFolderOrFile: '$(Build.BinariesDirectory)'
+              includeRootFolder: true
+              archiveType: 'zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+              replaceExistingArchive: true
           - task: PublishBuildArtifacts@1
       - job: validaton
         displayName: 'Manual Validation'
@@ -34,7 +37,7 @@ stages:
         steps:
         - task: AzureStaticWebApp@0
           inputs:
-            workingDirectory: '$(System.DefaultWorkingDirectory)/*.zip'
+            workingDirectory: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
             app_location: '/'
             skip_app_build: true
             azure_static_web_apps_api_token: '$(TokenDeploy)'
