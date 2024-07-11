@@ -1,17 +1,17 @@
 name: $(SourceBranchName).$(Rev:r)
-trigger:
-- main
-
 pool:
   vmImage: ubuntu-latest
-
+trigger:
+   - main
+   - homolog
+   - develop
 variables:
   - group: var-static-app
 stages:
-  - stage:
+  - stage: CI
     displayName: "Integração Continua"
     jobs:
-      - job: CI
+      - job: ContinuosIntegration
         displayName: CI
         steps:
           - task: ArchiveFiles@2
@@ -22,8 +22,12 @@ stages:
               archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
               replaceExistingArchive: true
           - task: PublishBuildArtifacts@1
+  - stage: Validation
+    displayName: "Validação"
+    condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/main'))
+    dependsOn: CI
+    jobs:
       - job: validaton
-        dependsOn: CI
         displayName: 'Manual Validation'
         pool: server
         steps:
@@ -33,9 +37,12 @@ stages:
                 instructions: "Deseja realizar a publicação agora?"
                 notifyUsers: 'pedroasmaia@outlook.com'
                 approvers: 'pedroasmaia@outlook.com'
+  - stage: DeployPrd
+    condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/main'))
+    dependsOn: Validation
+    jobs:
       - job: cd
         displayName: CD
-        dependsOn: validaton
         steps:
         - task: AzureStaticWebApp@0
           inputs:
