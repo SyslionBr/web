@@ -5,6 +5,8 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  - group: var-static-app
 stages:
   - stage:
     displayName: "Integração Continua"
@@ -17,3 +19,22 @@ stages:
               rootFolderOrFile: '$(build.sourcesDirectory)'
               includeRootFolder: false
           - task: PublishBuildArtifacts@1
+      - job: validaton
+        displayName: 'Manual Validation'
+        pool: server
+        steps:
+            - task: ManualValidation@1
+              timeoutInMinutes: 770
+              inputs:
+                notifyUsers: 'pedroasmaia@outlook.com'
+                approvers: 'pedroasmaia@outlook.com'
+      - job: cd
+        displayName: CD
+        dependsOn: validaton
+        steps:
+        - task: AzureStaticWebApp@0
+          inputs:
+            workingDirectory: '$(System.DefaultWorkingDirectory)/*.zip'
+            app_location: '/'
+            skip_app_build: true
+            azure_static_web_apps_api_token: '$(TokenDeploy)'
