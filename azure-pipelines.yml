@@ -11,7 +11,7 @@ stages:
   - stage:
     displayName: "Integração Continua"
     jobs:
-      - job: CIvalidation
+      - job: CI
         displayName: CI
         steps:
           - task: ArchiveFiles@2
@@ -23,12 +23,14 @@ stages:
               replaceExistingArchive: true
           - task: PublishBuildArtifacts@1
       - job: validaton
+        dependsOn: CI
         displayName: 'Manual Validation'
         pool: server
         steps:
             - task: ManualValidation@1
               timeoutInMinutes: 770
               inputs:
+                instructions: "Deseja realizar a publicação agora?"
                 notifyUsers: 'pedroasmaia@outlook.com'
                 approvers: 'pedroasmaia@outlook.com'
       - job: cd
