@@ -35,8 +35,8 @@ stages:
               timeoutInMinutes: 770
               inputs:
                 instructions: "Deseja realizar a publicação agora?"
-                notifyUsers: 'pedroasmaia@outlook.com'
-                approvers: 'pedroasmaia@outlook.com' 
+                notifyUsers: 'pedro.maia@syslion.com.br'
+                approvers: 'pedro.maia@syslion.com.br' 
   - stage: DeployDev
     condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
     dependsOn: CI
