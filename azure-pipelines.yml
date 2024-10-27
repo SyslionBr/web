@@ -6,7 +6,7 @@ trigger:
    - homolog
    - develop
 variables:
-  - group: var-static-app
+  - group: var-static-app-web
 stages:
   - stage: CI
     displayName: "Integração Continua"
